@@ -18,10 +18,10 @@
     "@types/express": "^4.17.2",
     "@types/node": "^13.1.8",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "typescript": "^3.7.5"
   },
   "devDependencies": {
-    "tslint": "^5.20.1",
-    "typescript": "^3.7.5"
+    "tslint": "^5.20.1"
   }
 }
