@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
-const port = process.env.SERVER_PORT;
 dotenv.config();
+const port = process.env.SERVER_PORT || 3000;
 const app = express();
 
 // define a route handler for the default home page
