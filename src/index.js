@@ -3,7 +3,7 @@ var express = require('express');
 var graphqlHTTP = require('express-graphql');
 var {buildSchema} = require('graphql');
 dotenv.config();
-const PORT = process.env.SERVER_PORT || 3000;
+const PORT = process.env.SERVER_PORT || 80;
 
 var schema = buildSchema(`
     type Query {
