@@ -1,0 +1,27 @@
+var dotenv = require('dotenv');
+var express = require('express');
+var graphqlHTTP = require('express-graphql');
+var {buildSchema} = require('graphql');
+dotenv.config();
+const PORT = process.env.SERVER_PORT || 3000;
+
+var schema = buildSchema(`
+    type Query {
+        hello: String
+    }
+`);
+
+var root = {
+    hello: () => {
+        return 'Hello World!';
+    },
+};
+
+var app = express();
+app.use('/graphql', graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true,
+}));
+app.listen(PORT);
+console.log('Running GraphQL API on port ' + PORT);
