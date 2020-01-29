@@ -9,8 +9,8 @@ const {
   GraphQLString,
   GraphQLBoolean,
   GraphQLList,
-  GraphQLSchema
-} = graphql_1;
+  GraphQLSchema0
+} = require("graphql");
 const User = require("./UserModel.js");
 
 const UserType = new GraphQLObjectType({

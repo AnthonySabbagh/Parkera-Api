@@ -30,7 +30,6 @@ app.use(
   "/api",
   graphqlHTTP({
     schema: schema,
-    rootValue: root,
     graphiql: true
   })
 );
