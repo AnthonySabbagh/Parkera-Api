@@ -10,17 +10,17 @@ User.init(
     phone: DataTypes.STRING,
     user_role: DataTypes.STRING
   },
-  { sequelize, modelName: "user" }
+  { sequelize, modelName: "user_account" }
 );
 
-sequelize
-  .sync()
-  .then(() =>
-    User.create({
-      username: "janedoe",
-      birthday: new Date(1980, 6, 20)
-    })
-  )
-  .then(jane => {
-    console.log(jane.toJSON());
-  });
+// sequelize
+//   .sync()
+//   .then(() =>
+//     User.create({
+//       username: "janedoe",
+//       birthday: new Date(1980, 6, 20)
+//     })
+//   )
+//   .then(jane => {
+//     console.log(jane.toJSON());
+//   });
