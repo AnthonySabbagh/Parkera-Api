@@ -1,7 +1,7 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
 const sequelize = new Sequelize("sqlite::memory:");
 
-class User extends Model {}
+export default class User extends Model {}
 User.init(
   {
     firstname: DataTypes.STRING,

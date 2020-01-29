@@ -4,7 +4,7 @@ var graphqlHTTP = require("express-graphql");
 var { buildSchema } = require("graphql");
 dotenv.config();
 const PORT = process.env.SERVER_PORT || process.env.PORT || 80;
-import schema from "./schema";
+const schema = require("./schema.js");
 // var schema = buildSchema(`
 //     type Query {
 //         hello: String
@@ -12,6 +12,11 @@ import schema from "./schema";
 // `);
 
 // var sequelize = new Sequelize("postgres://user:pass@example.com:5432/dbname");
+// var schema = buildSchema(`
+//     type Query {
+//         hello: String
+//     }
+// `);
 
 var root = {
   hello: () => {

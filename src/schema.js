@@ -11,7 +11,7 @@ const {
   GraphQLList,
   GraphQLSchema
 } = graphql_1;
-import User from "./UserModel";
+const User = require("./UserModel.js");
 
 const UserType = new GraphQLObjectType({
   name: "User",
@@ -28,12 +28,12 @@ const UserType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
   name: "RootQuerytype",
   fields: {
-    user: {
+    users: {
       type: UserType,
-      args: { id: { type: GraphQLString } },
       resolve(parent, args) {
         User.findAll().then(users => {
           console.log("All users:", JSON.stringify(users, null, 4));
+          return users;
         });
       }
     }
