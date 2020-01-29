@@ -11,8 +11,6 @@ var schema = buildSchema(`
     }
 `);
 
-var sequelize = new Sequelize("postgres://user:pass@example.com:5432/dbname");
-
 var root = {
   hello: () => {
     return "Hello World!";
