@@ -1,5 +1,6 @@
 const graphql = require("graphql");
 const { Sequelize } = require("sequelize");
+const DataTypes = require('sequelize/lib/data-types');
 const sequelize = new Sequelize(
   "postgres://cjyhlnswiregtb:4013f7ff7030a73b5416346a2dbf4f574b1e19f77ec6d23dcd86af6bdf35c0c3@ec2-34-196-180-38.compute-1.amazonaws.com:5432/dbu0u155104t2k"
 );
@@ -11,7 +12,7 @@ const {
   GraphQLList,
   GraphQLSchema
 } = require("graphql");
-const User = require("./UserModel.js");
+const User = require("./UserModel.js")(sequelize, DataTypes);
 
 const UserType = new GraphQLObjectType({
   name: "User",
