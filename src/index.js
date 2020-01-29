@@ -18,7 +18,8 @@ var root = {
 };
 
 var app = express();
-app.get('/', graphqlHTTP({
+app.get('/', (req, res) => res.send ('Parkera API. Hit api at /api'))
+app.use('/api', graphqlHTTP({
     schema: schema,
     rootValue: root,
     graphiql: true,
