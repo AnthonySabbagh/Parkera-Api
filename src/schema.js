@@ -16,9 +16,12 @@ import User from "./UserModel";
 const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
-    id: { type: GraphQLString },
-    name: { type: GraphQLString },
-    email: { type: GraphQLString }
+    uid: { type: GraphQLString },
+    firstname: { type: GraphQLString },
+    lastname: { type: GraphQLString },
+    user_role: { type: GraphQLString },
+    email: { type: GraphQLString },
+    phone: { type: GraphQLString }
   })
 });
 
