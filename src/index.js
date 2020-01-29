@@ -1,7 +1,7 @@
-var dotenv = require('dotenv');
-var express = require('express');
-var graphqlHTTP = require('express-graphql');
-var {buildSchema} = require('graphql');
+var dotenv = require("dotenv");
+var express = require("express");
+var graphqlHTTP = require("express-graphql");
+var { buildSchema } = require("graphql");
 dotenv.config();
 const PORT = process.env.SERVER_PORT || process.env.PORT || 80;
 
@@ -11,18 +11,23 @@ var schema = buildSchema(`
     }
 `);
 
+var sequelize = new Sequelize("postgres://user:pass@example.com:5432/dbname");
+
 var root = {
-    hello: () => {
-        return 'Hello World!';
-    },
+  hello: () => {
+    return "Hello World!";
+  }
 };
 
 var app = express();
-app.get('/', (req, res) => res.send ('Parkera API. Hit api at /api'))
-app.use('/api', graphqlHTTP({
+app.get("/", (req, res) => res.send("Parkera API. Hit api at /api"));
+app.use(
+  "/api",
+  graphqlHTTP({
     schema: schema,
     rootValue: root,
-    graphiql: true,
-}));
+    graphiql: true
+  })
+);
 app.listen(PORT);
-console.log('Running GraphQL API on port ' + PORT);
+console.log("Running GraphQL API on port " + PORT);
