@@ -9,7 +9,7 @@ const {
   GraphQLString,
   GraphQLBoolean,
   GraphQLList,
-  GraphQLSchema0
+  GraphQLSchema
 } = require("graphql");
 const User = require("./UserModel.js");
 
