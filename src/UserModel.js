@@ -34,6 +34,6 @@ module.exports = (sequelize, DataTypes) => {
     phone: DataTypes.STRING,
     user_role: DataTypes.STRING
   });
-
+  User.sync({ alter: true })
   return User;
 };

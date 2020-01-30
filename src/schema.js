@@ -13,7 +13,6 @@ const {
   GraphQLSchema
 } = require("graphql");
 const User = require("./UserModel.js")(sequelize, DataTypes);
-User.sync({ alter: true })
 
 const UserType = new GraphQLObjectType({
   name: "User",
