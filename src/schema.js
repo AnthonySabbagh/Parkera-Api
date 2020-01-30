@@ -25,7 +25,6 @@ const UserType = new GraphQLObjectType({
     phone: { type: GraphQLString }
   })
 });
-UserType.removeAttribute('id');
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuerytype",
