@@ -51,7 +51,7 @@ const mutation = new GraphQLObjectType({
                 email: { type: GraphQLString, primary: true },
                 phone: { type: GraphQLString }
             },
-            resolve(parentValue, args) {
+            resolve(parent, args) {
                 return User.create({
                     firstname: firstname,
                     lastname: lastname,
