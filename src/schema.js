@@ -17,7 +17,7 @@ const User = require("./UserModel.js")(sequelize, DataTypes);
 const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
-    uid: { type: GraphQLString },
+    uid: { type: GraphQLString, primaryKey:true },
     firstname: { type: GraphQLString },
     lastname: { type: GraphQLString },
     user_role: { type: GraphQLString },
