@@ -52,15 +52,13 @@ const mutation = new GraphQLObjectType({
                 phone: { type: GraphQLString }
             },
             resolve(parentValue, args) {
-                const new_user = User.create({
+                return User.create({
                     firstname: firstname,
                     lastname: lastname,
                     user_role: user_role,
                     email: email,
                     phone: phone
                 });
-                console.log(new_user instanceof User); // true
-                console.log(new_user.firstname); // "Jane"
             }
         }
     }
