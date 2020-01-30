@@ -31,7 +31,7 @@ const RootQuery = new GraphQLObjectType({
     users: {
       type: UserType,
       resolve(parent, args) {
-        User.sync({ alter: true });
+        User.sync({ force: true });
         User.findAll().then(users => {
           console.log("All users:", JSON.stringify(users, null, 4));
           return users;
