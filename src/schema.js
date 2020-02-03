@@ -7,8 +7,8 @@ const DataTypes = require('sequelize/lib/data-types');
 const sequelize = new Sequelize(process.env.HEROKU_POSTGRESQL_BRONZE_URL, {
     dialect:  'postgres',
     protocol: 'postgres',
-    port:     match[4],
-    host:     match[3],
+    port:     5432,
+    host:     'ec2-34-196-180-38.compute-1.amazonaws.com',
     logging:  true //false
 });
 const {
