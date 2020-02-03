@@ -9,7 +9,9 @@ const sequelize = new Sequelize("postgres://cjyhlnswiregtb:4013f7ff7030a73b54163
     protocol: 'postgres',
     port:     5432,
     host:     'ec2-34-196-180-38.compute-1.amazonaws.com',
-    logging:  true //false
+    logging:  console.log,
+    ssl:true,
+    dialectOptions:{ "ssl": {"require":true }}
 });
 const {
     GraphQLObjectType,
