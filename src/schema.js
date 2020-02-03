@@ -28,6 +28,9 @@ const {
     GraphQLSchema
 } = require("graphql");
 const User = require("./UserModel.js")(sequelize, DataTypes);
+(async () => {
+    await User.sync({ alter: true });
+})();
 
 const UserType = new GraphQLObjectType({
     name: "User",
@@ -44,8 +47,7 @@ const RootQuery = new GraphQLObjectType({
     fields: {
         users: {
             type: UserType,
-            async resolve(parent, args) {
-                await User.sync({ force: true });
+            resolve(parent, args) {
                 console.log("user query");
                 User.findAll().then(users => {
                     console.log("All users:", JSON.stringify(users, null, 4));

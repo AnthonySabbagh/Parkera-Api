@@ -27,12 +27,12 @@ const { Sequelize, Model, DataTypes } = require("sequelize");
 
 ("use strict");
 module.exports = (sequelize, DataTypes) => {
-  var User = sequelize.define("user_account", {
-    firstname: DataTypes.STRING,
-    lastname: DataTypes.STRING,
-    email: DataTypes.STRING,
-    phone: DataTypes.STRING,
-    user_role: DataTypes.STRING
-  });
-  return User;
+    var User = sequelize.define("user_account", {
+        firstname: DataTypes.STRING,
+        lastname: DataTypes.STRING,
+        email: DataTypes.STRING,
+        phone: DataTypes.STRING,
+        user_role: DataTypes.STRING
+    });
+    return User;
 };
