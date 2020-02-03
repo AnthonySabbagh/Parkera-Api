@@ -13,6 +13,12 @@ const sequelize = new Sequelize("postgres://cjyhlnswiregtb:4013f7ff7030a73b54163
     ssl:true,
     dialectOptions:{ "ssl": {"require":true }}
 });
+try {
+  sequelize.authenticate();
+  console.log('Connection has been established successfully.');
+} catch (error) {
+  console.error('Unable to connect to the database:', error);
+}
 const {
     GraphQLObjectType,
     GraphQLID,
@@ -38,8 +44,8 @@ const RootQuery = new GraphQLObjectType({
     fields: {
         users: {
             type: UserType,
-            resolve(parent, args) {
-                User.sync({ force: true });
+            async resolve(parent, args) {
+                await User.sync({ force: true });
                 console.log("user query");
                 User.findAll().then(users => {
                     console.log("All users:", JSON.stringify(users, null, 4));
