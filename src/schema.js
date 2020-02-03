@@ -1,9 +1,16 @@
 const graphql = require("graphql");
 const { Sequelize } = require("sequelize");
 const DataTypes = require('sequelize/lib/data-types');
-const sequelize = new Sequelize(
-    "postgres://cjyhlnswiregtb:4013f7ff7030a73b5416346a2dbf4f574b1e19f77ec6d23dcd86af6bdf35c0c3@ec2-34-196-180-38.compute-1.amazonaws.com:5432/dbu0u155104t2k"
-);
+//const sequelize = new Sequelize(
+  //  "postgres://cjyhlnswiregtb:4013f7ff7030a73b5416346a2dbf4f574b1e19f77ec6d23dcd86af6bdf35c0c3@ec2-34-196-180-38.compute-1.amazonaws.com:5432/dbu0u155104t2k", {SSL:true}
+//);
+const sequelize = new Sequelize(process.env.HEROKU_POSTGRESQL_BRONZE_URL, {
+    dialect:  'postgres',
+    protocol: 'postgres',
+    port:     match[4],
+    host:     match[3],
+    logging:  true //false
+});
 const {
     GraphQLObjectType,
     GraphQLID,
@@ -31,6 +38,7 @@ const RootQuery = new GraphQLObjectType({
             type: UserType,
             resolve(parent, args) {
                 User.sync({ force: true });
+                console.log("user query");
                 User.findAll().then(users => {
                     console.log("All users:", JSON.stringify(users, null, 4));
                     return users;
@@ -64,7 +72,7 @@ const mutation = new GraphQLObjectType({
     }
 });
 module.exports = new GraphQLSchema({
-query: RootQuery,
+    query: RootQuery,
     mutation
 });
 //# sourceMappingURL=schema.js.map

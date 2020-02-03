@@ -18,11 +18,6 @@ const schema = require("./schema.js");
 //     }
 // `);
 
-var root = {
-  hello: () => {
-    return "Hello World!";
-  }
-};
 
 var app = express();
 app.get("/", (req, res) => res.send("Parkera API. Hit api at /api"));
