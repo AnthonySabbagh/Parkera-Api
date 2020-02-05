@@ -47,10 +47,10 @@ const RootQuery = new GraphQLObjectType({
     fields: {
         users: {
             type: UserType,
-            User.findAll();
-            /*async resolve(parent, args) {
+            async resolve(parent, args) {
                 console.log("user query");
-                return User.findAll();
+                return await User.findAll();
+                /*return User.findAll();
                 await User.findAll().then(users => {
                     console.log("All users:", JSON.stringify(users, null, 4));
                     console.log("users", users.values);
