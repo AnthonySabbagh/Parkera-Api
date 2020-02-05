@@ -76,11 +76,11 @@ const mutation = new GraphQLObjectType({
             },
             resolve(parent, args) {
                 return User.create({
-                    firstname: firstname,
-                    lastname: lastname,
-                    user_role: user_role,
-                    email: email,
-                    phone: phone
+                    firstname: args.firstname,
+                    lastname: args.lastname,
+                    user_role: args.user_role,
+                    email: args.email,
+                    phone: args.phone
                 });
             }
         }
