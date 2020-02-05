@@ -50,6 +50,7 @@ const RootQuery = new GraphQLObjectType({
             async resolve(parent, args) {
                 console.log("user query");
                 users = await User.findAll();
+                console.log("users", JSON.stringify(users,null,4));
                 return users;
                 /*return User.findAll();
                 await User.findAll().then(users => {
