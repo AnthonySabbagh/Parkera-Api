@@ -6,7 +6,9 @@ module.exports = (sequelize, DataTypes) => {
         license: DataTypes.STRING,
         model: DataTypes.STRING,
         color: DataTypes.STRING
-
+    },
+    {
+        timestamps: false,
     });
     return Car_info;
 };

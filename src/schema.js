@@ -28,8 +28,13 @@ const {
     GraphQLSchema
 } = require("graphql");
 const User = require("./UserModel.js")(sequelize, DataTypes);
+const CarInfo = require("./CarModel.js")(sequelize, DataTypes);
+
 (async () => {
     await User.sync({ alter: true });
+})();
+(async () => {
+    await CarInfo.sync({ alter: true });
 })();
 
 const UserType = new GraphQLObjectType({
@@ -42,6 +47,18 @@ const UserType = new GraphQLObjectType({
         phone: { type: GraphQLString }
     })
 });
+
+const CarType = new GraphQLObjectType({
+    name: "CarInfo",
+    fields: () => ({
+        license: { type: GraphQLString },
+        model: { type: GraphQLString },
+        color: { type: GraphQLString }
+    })
+});
+
+
+
 const RootQuery = new GraphQLObjectType({
     name: "RootQuerytype",
     fields: {
@@ -58,6 +75,15 @@ const RootQuery = new GraphQLObjectType({
                     console.log("users", users.values);
                     return users.values;
                 });*/
+            }
+        },
+        cars: {
+            type: CarType,
+            async resolve(parent, args) {
+                console.log("cars query");
+                cars = await CarInfo.findAll({plain:true});
+                console.log("cars", JSON.stringify(cars,null,4));
+                return cars;
             }
         }
     }
