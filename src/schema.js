@@ -221,21 +221,21 @@ const mutation = new GraphQLObjectType({
           userAccountId: args.userAccountId
         });
       },
-      addAuthentications: {
-        type: AuthenticationInfoType,
-        args: {
-            email: { type: GraphQLString },
-            password: { type: GraphQLString },
-            userAccountId:{type: GraphQLInt}
-        },
-        resolve(parent, args) {
-            return AuthenticationInfos.create({
-                email: args.email,
-                password: args.password,
-                userAccountId: args.userAccountId
-            });
-        }
-    }
+    },
+    addAuthentications: {
+      type: AuthenticationInfoType,
+      args: {
+          email: { type: GraphQLString },
+          password: { type: GraphQLString },
+          userAccountId:{type: GraphQLInt}
+      },
+      resolve(parent, args) {
+          return AuthenticationInfos.create({
+              email: args.email,
+              password: args.password,
+              userAccountId: args.userAccountId
+          });
+      }
     }
   }
 });
