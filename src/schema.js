@@ -136,20 +136,20 @@ const RootQuery = new GraphQLObjectType({
         // console.log("spots", spots);
         return autheticationInfos;
       },
+    },
     getAuthenticationbyEmail: {
-        type:  GraphQLList(AuthenticationInfoType),
-        args: {
-            email: { type: GraphQLString },
-        },
-        resolve(parent, args) {
-            return AuthenticationInfos.findAll({
-                where:{
-                    email:args.email
-                }
-            });
-        }
-    }
-    }
+      type:  GraphQLList(AuthenticationInfoType),
+      args: {
+          email: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+          return AuthenticationInfos.findAll({
+              where:{
+                  email:args.email
+              }
+          });
+      }
+  }
   }
 });
 
