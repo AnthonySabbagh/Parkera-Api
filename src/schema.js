@@ -29,13 +29,16 @@ const {
 const User = require("./UserModel.js")(sequelize, DataTypes);
 const CarInfo = require("./CarModel.js")(sequelize, DataTypes);
 const ParkingSpot = require("./ParkingSpotModel.js")(sequelize, DataTypes);
+const Authentication = require("./AuthenticationModel.js")(sequelize, DataTypes);
 ParkingSpot.belongsTo(User);
 CarInfo.belongsTo(User);
+Authentication.belongsTo(User);
 //Synching database with how models are defined
 (async () => {
     await User.sync({ alter: true });
     await CarInfo.sync({ alter: true });
     await ParkingSpot.sync({alter: true});
+    await Authentication.sync({alter:true});
 })();
 
 const UserType = new GraphQLObjectType({
@@ -76,6 +79,19 @@ const ParkingSpotType = new GraphQLObjectType({
     })
 });
 
+const AuthenticationType = new GraphQLObjectType({
+    name: "Authentication",
+    fields: () => ({
+        id: {type: GraphQLInt},
+        userAccountId: { type: GraphQLInt },
+        updatedAt: {type: GraphQLString },
+        createdAt: {type: GraphQLString },
+        email: { type: GraphQLString },
+        password: { type: GraphQLString },
+        is_login: { type: GraphQLBoolean }
+    })
+});
+
 const RootQuery = new GraphQLObjectType({
     name: "RootQuerytype",
     fields: {
@@ -104,6 +120,15 @@ const RootQuery = new GraphQLObjectType({
                 spots = await ParkingSpot.findAll({raw:true});
                 console.log("spots", spots);
                 return spots;
+            }
+        },
+        Authentications: {
+            type: GraphQLList(AuthenticationType),
+            async resolve(parent, args) {
+                console.log("authentication query");
+                AuthenticationResult = await Authentication.findAll({raw:true});
+                console.log("spots", AuthenticationResult);
+                return AuthenticationResult;
             }
         }
     }
@@ -156,6 +181,21 @@ const mutation = new GraphQLObjectType({
             resolve(parent, args) {
                 return ParkingSpot.create({
                     address: args.address,
+                    userAccountId: args.userAccountId
+                });
+            }
+        },
+        addAuthentications: {
+            type: AuthenticationType,
+            args: {
+                email: { type: GraphQLString },
+                password: { type: GraphQLString },
+                userAccountId:{type: GraphQLInt}
+            },
+            resolve(parent, args) {
+                return Authentication.create({
+                    email: args.email,
+                    password: args.password,
                     userAccountId: args.userAccountId
                 });
             }
