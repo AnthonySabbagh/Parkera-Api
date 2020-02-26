@@ -13,7 +13,6 @@ const sequelize = new Sequelize(
     dialectOptions: { ssl: { require: true } }
   }
 );
-
 try {
   sequelize.authenticate();
   console.log("Connection has been established successfully.");
@@ -25,51 +24,100 @@ const {
   GraphQLID,
   GraphQLString,
   GraphQLBoolean,
+  GraphQLInt,
   GraphQLList,
   GraphQLSchema
 } = require("graphql");
 
+//Define sequelize models
 const User = require("./UserModel.js")(sequelize, DataTypes);
+const CarInfo = require("./CarModel.js")(sequelize, DataTypes);
+const ParkingSpot = require("./ParkingSpotModel.js")(sequelize, DataTypes);
 const AuthenticationInfos = require("./AuthenticationInfos.js")(
   sequelize,
   DataTypes
 );
+ParkingSpot.belongsTo(User);
+CarInfo.belongsTo(User);
+//Synching database with how models are defined
 (async () => {
   await User.sync({ alter: true });
+  await CarInfo.sync({ alter: true });
+  await ParkingSpot.sync({ alter: true });
   await AuthenticationInfos.sync({ alter: true });
 })();
 
 const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
+    id: { type: GraphQLInt },
+    updatedAt: { type: GraphQLString },
+    createdAt: { type: GraphQLString },
     firstname: { type: GraphQLString },
     lastname: { type: GraphQLString },
     user_role: { type: GraphQLString },
     email: { type: GraphQLString, primary: true },
-    phone: { type: GraphQLString },
-    password: { type: GraphQLString }
+    phone: { type: GraphQLString }
   })
 });
+
+const CarType = new GraphQLObjectType({
+  name: "CarInfo",
+  fields: () => ({
+    id: { type: GraphQLInt },
+    updatedAt: { type: GraphQLString },
+    createdAt: { type: GraphQLString },
+    license: { type: GraphQLString },
+    model: { type: GraphQLString },
+    color: { type: GraphQLString },
+    userAccountId: { type: GraphQLInt }
+  })
+});
+
+const ParkingSpotType = new GraphQLObjectType({
+  name: "ParkingSpot",
+  fields: () => ({
+    id: { type: GraphQLInt },
+    updatedAt: { type: GraphQLString },
+    createdAt: { type: GraphQLString },
+    address: { type: GraphQLString },
+    userAccountId: { type: GraphQLInt }
+  })
+});
+
 const RootQuery = new GraphQLObjectType({
   name: "RootQuerytype",
   fields: {
     users: {
-      type: UserType,
+      type: GraphQLList(UserType),
       async resolve(parent, args) {
         console.log("user query");
-        users = await User.findAll({ plain: true });
-        console.log("users", JSON.stringify(users, null, 4));
+        users = await User.findAll({ raw: true });
+        console.log("users", users);
         return users;
-        /*return User.findAll();
-                await User.findAll().then(users => {
-                    console.log("All users:", JSON.stringify(users, null, 4));
-                    console.log("users", users.values);
-                    return users.values;
-                });*/
+      }
+    },
+    cars: {
+      type: GraphQLList(CarType),
+      async resolve(parent, args) {
+        console.log("cars query");
+        cars = await CarInfo.findAll({ raw: true });
+        console.log("cars", cars);
+        return cars;
+      }
+    },
+    parkingSpots: {
+      type: GraphQLList(ParkingSpotType),
+      async resolve(parent, args) {
+        console.log("parking spot query");
+        spots = await ParkingSpot.findAll({ raw: true });
+        console.log("spots", spots);
+        return spots;
       }
     }
   }
 });
+
 const mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
@@ -105,6 +153,36 @@ const mutation = new GraphQLObjectType({
               });
           })
           .catch(err => console.log(err));
+      }
+    },
+    addCar: {
+      type: CarType,
+      args: {
+        license: { type: GraphQLString },
+        model: { type: GraphQLString },
+        color: { type: GraphQLString },
+        userAccountId: { type: GraphQLInt }
+      },
+      resolve(parent, args) {
+        return CarInfo.create({
+          license: args.license,
+          model: args.model,
+          color: args.color,
+          userAccountId: args.userAccountId
+        });
+      }
+    },
+    addParkingSpot: {
+      type: ParkingSpotType,
+      args: {
+        address: { type: GraphQLString },
+        userAccountId: { type: GraphQLInt }
+      },
+      resolve(parent, args) {
+        return ParkingSpot.create({
+          address: args.address,
+          userAccountId: args.userAccountId
+        });
       }
     }
   }
