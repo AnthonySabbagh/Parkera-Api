@@ -130,9 +130,28 @@ const RootQuery = new GraphQLObjectType({
                 console.log("spots", AuthenticationResult);
                 return AuthenticationResult;
             }
+        },
+        getAuthenticationbyEmail: {
+            type:  GraphQLList(AuthenticationType),
+            args: {
+                email: { type: GraphQLString },
+            },
+            resolve(parent, args) {
+                return Authentication.findAll({
+                    where:{
+                        email:args.email
+                    }
+                });
+            }
         }
+
+        
     }
 });
+
+
+
+
 const mutation = new GraphQLObjectType({
     name: "Mutation",
     fields: {
