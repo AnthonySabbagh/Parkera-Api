@@ -85,6 +85,18 @@ const ParkingSpotType = new GraphQLObjectType({
   })
 });
 
+const AuthenticationInfoType = new GraphQLObjectType({
+  name: "AuthInfo",
+  fields: () => ({
+    password: { type: GraphQLString },
+    is_login: { type: GraphQLBoolean },
+    email: { type: GraphQLString },
+    createdAt: { type: GraphQLString },
+    updatedAt: { type: GraphQLString },
+    userAccountId: { type: GraphQLInt }
+  })
+});
+
 const RootQuery = new GraphQLObjectType({
   name: "RootQuerytype",
   fields: {
@@ -114,6 +126,15 @@ const RootQuery = new GraphQLObjectType({
         console.log("spots", spots);
         return spots;
       }
+    },
+    authenticationInfos: {
+      type: GraphQLList(AuthenticationInfoType),
+      async resolve(parent, args) {
+        // consossssle.log("parking spot query");
+        autheticationInfos = await AuthenticationInfos.findAll({ raw: true });
+        // console.log("spots", spots);
+        return autheticationInfos;
+      }
     }
   }
 });
@@ -141,6 +162,8 @@ const mutation = new GraphQLObjectType({
         })
           .then(resp => {
             const user = resp.dataValues;
+            console.log("     ");
+            console.log(args.password);
             AuthenticationInfos.create({
               password: args.password,
               is_login: true,
