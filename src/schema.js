@@ -39,6 +39,7 @@ const AuthenticationInfos = require("./AuthenticationInfos.js")(
 );
 ParkingSpot.belongsTo(User);
 CarInfo.belongsTo(User);
+AuthenticationInfos.belongsTo(User);
 //Synching database with how models are defined
 (async () => {
   await User.sync({ alter: true });
@@ -134,7 +135,20 @@ const RootQuery = new GraphQLObjectType({
         autheticationInfos = await AuthenticationInfos.findAll({ raw: true });
         // console.log("spots", spots);
         return autheticationInfos;
-      }
+      },
+    getAuthenticationbyEmail: {
+        type:  GraphQLList(AuthenticationInfoType),
+        args: {
+            email: { type: GraphQLString },
+        },
+        resolve(parent, args) {
+            return AuthenticationInfos.findAll({
+                where:{
+                    email:args.email
+                }
+            });
+        }
+    }
     }
   }
 });
@@ -206,7 +220,22 @@ const mutation = new GraphQLObjectType({
           address: args.address,
           userAccountId: args.userAccountId
         });
-      }
+      },
+      addAuthentications: {
+        type: AuthenticationInfoType,
+        args: {
+            email: { type: GraphQLString },
+            password: { type: GraphQLString },
+            userAccountId:{type: GraphQLInt}
+        },
+        resolve(parent, args) {
+            return AuthenticationInfos.create({
+                email: args.email,
+                password: args.password,
+                userAccountId: args.userAccountId
+            });
+        }
+    }
     }
   }
 });
