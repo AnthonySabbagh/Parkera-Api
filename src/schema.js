@@ -229,19 +229,16 @@ const mutation = new GraphQLObjectType({
         license: { type: GraphQLString },
         model: { type: GraphQLString },
         color: { type: GraphQLString },
-        userAccountId: { type: GraphQLInt }
       },
       resolve(parent, args) {
-        return CarInfo.update({
-          license: args.license,
-          model: args.model,
-          color: args.color,
-          userAccountId: args.userAccountId
-        },{where:{
-          id:args.id
-        }
-      }
-        );
+        return CarInfo.findByPk(args.id).then(car => {
+            return car.update({
+                license: args.license,
+                model: args.model,
+                color: args.color
+            }).then((car) => {console.log(car.dataValues);
+                return car.dataValues})
+        })
       }
     },
     addParkingSpot: {
