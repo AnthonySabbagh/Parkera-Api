@@ -189,18 +189,18 @@ const mutation = new GraphQLObjectType({
         })
           .then(resp => {
             const user = resp.dataValues;
-            console.log("     ");
-            console.log(args.password);
-            AuthenticationInfos.create({
+
+              AuthenticationInfos.create({
               password: args.password,
               is_login: true,
               email: user.email,
               userAccountId: user.id
             })
-              .then(resp => {})
+              .then(resp => {return resp})
               .catch(err => {
                 console.log(err);
               });
+              return resp;
           })
           .catch(err => console.log(err));
       }
