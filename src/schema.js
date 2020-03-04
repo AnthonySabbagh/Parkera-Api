@@ -119,6 +119,19 @@ const RootQuery = new GraphQLObjectType({
         return cars;
       }
     },
+    getCarbyuserId: {
+      type:  GraphQLList(CarType),
+      args: {
+        userAccountId: { type: GraphQLInt },
+      },
+      resolve(parent, args) {
+          return AuthenticationInfos.findAll({
+              where:{
+                userAccountId:args.userAccountId
+              }
+          });
+      }
+    },
     parkingSpots: {
       type: GraphQLList(ParkingSpotType),
       async resolve(parent, args) {
@@ -149,7 +162,7 @@ const RootQuery = new GraphQLObjectType({
               }
           });
       }
-  }
+    }
   }
 });
 
@@ -207,6 +220,28 @@ const mutation = new GraphQLObjectType({
           color: args.color,
           userAccountId: args.userAccountId
         });
+      }
+    },
+    updateCar: {
+      type: CarType,
+      args: {
+        id:{type: GraphQLInt },
+        license: { type: GraphQLString },
+        model: { type: GraphQLString },
+        color: { type: GraphQLString },
+        userAccountId: { type: GraphQLInt }
+      },
+      resolve(parent, args) {
+        return CarInfo.update({
+          license: args.license,
+          model: args.model,
+          color: args.color,
+          userAccountId: args.userAccountId
+        },{where:{
+          id:args.id
+        }
+      }
+        );
       }
     },
     addParkingSpot: {
