@@ -119,13 +119,26 @@ const RootQuery = new GraphQLObjectType({
         return cars;
       }
     },
-    getCarbyuserId: {
+    carsByUserId: {
       type:  GraphQLList(CarType),
       args: {
         userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
            return CarInfo.findAll({raw: true,
+              where:{
+                userAccountId:args.userAccountId
+              }
+          })
+      }
+    },
+    parkingSpotsByUserId: {
+      type:  GraphQLList(ParkingSpotType),
+      args: {
+        userAccountId: { type: GraphQLInt },
+      },
+      resolve(parent, args) {
+           return ParkingSpot.findAll({raw: true,
               where:{
                 userAccountId:args.userAccountId
               }
@@ -238,6 +251,21 @@ const mutation = new GraphQLObjectType({
                 color: args.color
             }).then((car) => {console.log(car.dataValues);
                 return car.dataValues})
+        })
+      }
+    },
+    updateParkingSpot: {
+      type: ParkingSpotType,
+      args: {
+        id:{type: GraphQLInt },
+        address: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        return ParkingSpot.findByPk(args.id).then(spot => {
+            return spot.update({
+                address: args.address,
+            }).then((spot) => {console.log(spot.dataValues);
+                return spot.dataValues})
         })
       }
     },
