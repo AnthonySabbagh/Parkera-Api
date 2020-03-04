@@ -125,11 +125,11 @@ const RootQuery = new GraphQLObjectType({
         userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
-          return AuthenticationInfos.findAll({
+           return CarInfo.findAll({raw: true,
               where:{
                 userAccountId:args.userAccountId
               }
-          });
+          })
       }
     },
     parkingSpots: {
@@ -241,6 +241,11 @@ const mutation = new GraphQLObjectType({
           id:args.id
         }
       }
+        ).then((sequence) => {
+          console.log(sequence);
+          return sequence[1][0].dataValues;
+      }
+          
         );
       }
     },
