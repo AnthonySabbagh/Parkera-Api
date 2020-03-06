@@ -220,7 +220,7 @@ const mutation = new GraphQLObjectType({
             return resp;
           })
           .catch(err => {
-            return err;
+            throw new Error(err.errors[0].message);
           });
       }
     },

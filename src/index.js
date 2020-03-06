@@ -3,7 +3,7 @@ var express = require("express");
 var graphqlHTTP = require("express-graphql");
 var { buildSchema } = require("graphql");
 dotenv.config();
-const PORT = process.env.SERVER_PORT || process.env.PORT || 80;
+const PORT = process.env.SERVER_PORT || process.env.PORT || 8080;
 const schema = require("./schema.js");
 // var schema = buildSchema(`
 //     type Query {
@@ -17,7 +17,6 @@ const schema = require("./schema.js");
 //         hello: String
 //     }
 // `);
-
 
 var app = express();
 app.get("/", (req, res) => res.send("Parkera API. Hit api at /api"));
