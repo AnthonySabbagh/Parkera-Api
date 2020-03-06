@@ -120,29 +120,31 @@ const RootQuery = new GraphQLObjectType({
       }
     },
     carsByUserId: {
-      type:  GraphQLList(CarType),
+      type: GraphQLList(CarType),
       args: {
-        userAccountId: { type: GraphQLInt },
+        userAccountId: { type: GraphQLInt }
       },
       resolve(parent, args) {
-           return CarInfo.findAll({raw: true,
-              where:{
-                userAccountId:args.userAccountId
-              }
-          })
+        return CarInfo.findAll({
+          raw: true,
+          where: {
+            userAccountId: args.userAccountId
+          }
+        });
       }
     },
     parkingSpotsByUserId: {
-      type:  GraphQLList(ParkingSpotType),
+      type: GraphQLList(ParkingSpotType),
       args: {
-        userAccountId: { type: GraphQLInt },
+        userAccountId: { type: GraphQLInt }
       },
       resolve(parent, args) {
-           return ParkingSpot.findAll({raw: true,
-              where:{
-                userAccountId:args.userAccountId
-              }
-          })
+        return ParkingSpot.findAll({
+          raw: true,
+          where: {
+            userAccountId: args.userAccountId
+          }
+        });
       }
     },
     parkingSpots: {
@@ -161,19 +163,19 @@ const RootQuery = new GraphQLObjectType({
         autheticationInfos = await AuthenticationInfos.findAll({ raw: true });
         // console.log("spots", spots);
         return autheticationInfos;
-      },
+      }
     },
     getAuthenticationbyEmail: {
-      type:  GraphQLList(AuthenticationInfoType),
+      type: GraphQLList(AuthenticationInfoType),
       args: {
-          email: { type: GraphQLString },
+        email: { type: GraphQLString }
       },
       resolve(parent, args) {
-          return AuthenticationInfos.findAll({
-              where:{
-                  email:args.email
-              }
-          });
+        return AuthenticationInfos.findAll({
+          where: {
+            email: args.email
+          }
+        });
       }
     }
   }
@@ -203,19 +205,23 @@ const mutation = new GraphQLObjectType({
           .then(resp => {
             const user = resp.dataValues;
 
-              AuthenticationInfos.create({
+            AuthenticationInfos.create({
               password: args.password,
               is_login: true,
               email: user.email,
               userAccountId: user.id
             })
-              .then(resp => {return resp})
+              .then(resp => {
+                return resp;
+              })
               .catch(err => {
                 console.log(err);
               });
-              return resp;
+            return resp;
           })
-          .catch(err => console.log(err));
+          .catch(err => {
+            return err;
+          });
       }
     },
     addCar: {
@@ -238,35 +244,43 @@ const mutation = new GraphQLObjectType({
     updateCar: {
       type: CarType,
       args: {
-        id:{type: GraphQLInt },
+        id: { type: GraphQLInt },
         license: { type: GraphQLString },
         model: { type: GraphQLString },
-        color: { type: GraphQLString },
+        color: { type: GraphQLString }
       },
       resolve(parent, args) {
         return CarInfo.findByPk(args.id).then(car => {
-            return car.update({
-                license: args.license,
-                model: args.model,
-                color: args.color
-            }).then((car) => {console.log(car.dataValues);
-                return car.dataValues})
-        })
+          return car
+            .update({
+              license: args.license,
+              model: args.model,
+              color: args.color
+            })
+            .then(car => {
+              console.log(car.dataValues);
+              return car.dataValues;
+            });
+        });
       }
     },
     updateParkingSpot: {
       type: ParkingSpotType,
       args: {
-        id:{type: GraphQLInt },
-        address: { type: GraphQLString },
+        id: { type: GraphQLInt },
+        address: { type: GraphQLString }
       },
       resolve(parent, args) {
         return ParkingSpot.findByPk(args.id).then(spot => {
-            return spot.update({
-                address: args.address,
-            }).then((spot) => {console.log(spot.dataValues);
-                return spot.dataValues})
-        })
+          return spot
+            .update({
+              address: args.address
+            })
+            .then(spot => {
+              console.log(spot.dataValues);
+              return spot.dataValues;
+            });
+        });
       }
     },
     addParkingSpot: {
@@ -280,21 +294,21 @@ const mutation = new GraphQLObjectType({
           address: args.address,
           userAccountId: args.userAccountId
         });
-      },
+      }
     },
     addAuthentications: {
       type: AuthenticationInfoType,
       args: {
-          email: { type: GraphQLString },
-          password: { type: GraphQLString },
-          userAccountId:{type: GraphQLInt}
+        email: { type: GraphQLString },
+        password: { type: GraphQLString },
+        userAccountId: { type: GraphQLInt }
       },
       resolve(parent, args) {
-          return AuthenticationInfos.create({
-              email: args.email,
-              password: args.password,
-              userAccountId: args.userAccountId
-          });
+        return AuthenticationInfos.create({
+          email: args.email,
+          password: args.password,
+          userAccountId: args.userAccountId
+        });
       }
     }
   }
