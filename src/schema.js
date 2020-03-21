@@ -268,13 +268,17 @@ const mutation = new GraphQLObjectType({
       type: ParkingSpotType,
       args: {
         id: { type: GraphQLInt },
-        address: { type: GraphQLString }
+        address: { type: GraphQLString },
+        longitude: { type: GraphQLString },
+        lattitude: { type: GraphQLString }
       },
       resolve(parent, args) {
         return ParkingSpot.findByPk(args.id).then(spot => {
           return spot
             .update({
-              address: args.address
+              address: args.address,
+              longitude: args.longitude,
+              latitude: args.latitude,
             })
             .then(spot => {
               console.log(spot.dataValues);
@@ -287,12 +291,16 @@ const mutation = new GraphQLObjectType({
       type: ParkingSpotType,
       args: {
         address: { type: GraphQLString },
-        userAccountId: { type: GraphQLInt }
+        userAccountId: { type: GraphQLInt },
+        longitude: { type: GraphQLString },
+        lattitude: { type: GraphQLString }
       },
       resolve(parent, args) {
         return ParkingSpot.create({
           address: args.address,
-          userAccountId: args.userAccountId
+          userAccountId: args.userAccountId,
+          longitude: args.longitude,
+          latitude: args.latitude,
         });
       }
     },
