@@ -151,6 +151,21 @@ const RootQuery = new GraphQLObjectType({
         });
       }
     },
+    parkingSpotsNear: {
+      type: GraphQLList(ParkingSpotType),
+      args: {
+        longitude: { type: GraphQLString },
+        lattitude: { type: GraphQLString },
+        distance: { type: GraphQLInt }
+      }
+      async resolve(parent, args) {
+        spots = await sequelize.query('SELECT * FROM parkingspot WHERE (longitude * longitude) + (latitude*latitude) <= ?', {
+          model: ParkingSpot,
+          replacements: [
+
+          });
+      }
+    },
     parkingSpots: {
       type: GraphQLList(ParkingSpotType),
       async resolve(parent, args) {
