@@ -48,6 +48,7 @@ AuthenticationInfos.belongsTo(User);
   await AuthenticationInfos.sync({ alter: true });
 })();
 
+//GraphQL object definitions
 const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
@@ -98,6 +99,7 @@ const AuthenticationInfoType = new GraphQLObjectType({
   })
 });
 
+//root query
 const RootQuery = new GraphQLObjectType({
   name: "RootQuerytype",
   fields: {
@@ -154,6 +156,21 @@ const RootQuery = new GraphQLObjectType({
         spots = await ParkingSpot.findAll({ raw: true });
         console.log("spots", spots);
         return spots;
+      }
+    },
+    parkingSpotsNear: {
+      type: GraphQLList(ParkingSpotType),
+      args: {
+        longitude: { type: GraphQLString },
+        lattitude: { type: GraphQLString },
+        distance: { type: GraphQLInt }
+      }
+      async resolve(parent, args) {
+        spots = await sequelize.query('SELECT * FROM parkingspot WHERE (longitude * longitude) + (latitude*latitude) <= ?', {
+          model: ParkingSpot,
+          replacements: [
+
+          });
       }
     },
     authenticationInfos: {
