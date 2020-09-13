@@ -276,7 +276,9 @@ const mutation = new GraphQLObjectType({
         return ParkingSpot.findByPk(args.id).then(spot => {
           return spot
             .update({
-              address: args.address
+              address: args.address,
+              longitude: args.longitude,
+              latitude: args.latitude
             })
             .then(spot => {
               console.log(spot.dataValues);
