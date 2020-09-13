@@ -33,10 +33,7 @@ const {
 const User = require("./UserModel.js")(sequelize, DataTypes);
 const CarInfo = require("./CarModel.js")(sequelize, DataTypes);
 const ParkingSpot = require("./ParkingSpotModel.js")(sequelize, DataTypes);
-const AuthenticationInfos = require("./AuthenticationInfos.js")(
-  sequelize,
-  DataTypes
-);
+const AuthenticationInfos = require("./AuthenticationInfos.js")(sequelize, DataTypes);
 ParkingSpot.belongsTo(User);
 CarInfo.belongsTo(User);
 AuthenticationInfos.belongsTo(User);
@@ -82,7 +79,10 @@ const ParkingSpotType = new GraphQLObjectType({
     updatedAt: { type: GraphQLString },
     createdAt: { type: GraphQLString },
     address: { type: GraphQLString },
-    userAccountId: { type: GraphQLInt }
+    longitude: {type: graphql.GraphQLFloat},
+    latitude: {type: graphql.GraphQLFloat},
+    userAccountId: { type: GraphQLInt },
+
   })
 });
 
@@ -268,7 +268,9 @@ const mutation = new GraphQLObjectType({
       type: ParkingSpotType,
       args: {
         id: { type: GraphQLInt },
-        address: { type: GraphQLString }
+        address: { type: GraphQLString },
+        longitude: {type: graphql.GraphQLFloat},
+        latitude: {type: graphql.GraphQLFloat}
       },
       resolve(parent, args) {
         return ParkingSpot.findByPk(args.id).then(spot => {
@@ -287,11 +289,15 @@ const mutation = new GraphQLObjectType({
       type: ParkingSpotType,
       args: {
         address: { type: GraphQLString },
+        longitude: {type: graphql.GraphQLFloat},
+        latitude: {type: graphql.GraphQLFloat},
         userAccountId: { type: GraphQLInt }
       },
       resolve(parent, args) {
         return ParkingSpot.create({
           address: args.address,
+          longitude: args.longitude,
+          latitude: args.latitude,
           userAccountId: args.userAccountId
         });
       }
