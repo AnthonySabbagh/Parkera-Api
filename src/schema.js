@@ -10,7 +10,7 @@ const sequelize = new Sequelize(
     host: "ec2-34-196-180-38.compute-1.amazonaws.com",
     logging: console.log,
     ssl: true,
-    dialectOptions: { ssl: { require: true } }
+    dialectOptions: { ssl: { require: true } },
   }
 );
 try {
@@ -25,15 +25,19 @@ const {
   GraphQLString,
   GraphQLBoolean,
   GraphQLInt,
+  GraphQLFloat,
   GraphQLList,
-  GraphQLSchema
+  GraphQLSchema,
 } = require("graphql");
 
 //Define sequelize models
 const User = require("./UserModel.js")(sequelize, DataTypes);
 const CarInfo = require("./CarModel.js")(sequelize, DataTypes);
 const ParkingSpot = require("./ParkingSpotModel.js")(sequelize, DataTypes);
-const AuthenticationInfos = require("./AuthenticationInfos.js")(sequelize, DataTypes);
+const AuthenticationInfos = require("./AuthenticationInfos.js")(
+  sequelize,
+  DataTypes
+);
 ParkingSpot.belongsTo(User);
 CarInfo.belongsTo(User);
 AuthenticationInfos.belongsTo(User);
@@ -55,8 +59,8 @@ const UserType = new GraphQLObjectType({
     lastname: { type: GraphQLString },
     user_role: { type: GraphQLString },
     email: { type: GraphQLString, primary: true },
-    phone: { type: GraphQLString }
-  })
+    phone: { type: GraphQLString },
+  }),
 });
 
 const CarType = new GraphQLObjectType({
@@ -68,8 +72,8 @@ const CarType = new GraphQLObjectType({
     license: { type: GraphQLString },
     model: { type: GraphQLString },
     color: { type: GraphQLString },
-    userAccountId: { type: GraphQLInt }
-  })
+    userAccountId: { type: GraphQLInt },
+  }),
 });
 
 const ParkingSpotType = new GraphQLObjectType({
@@ -79,11 +83,11 @@ const ParkingSpotType = new GraphQLObjectType({
     updatedAt: { type: GraphQLString },
     createdAt: { type: GraphQLString },
     address: { type: GraphQLString },
-    longitude: {type: graphql.GraphQLFloat},
-    latitude: {type: graphql.GraphQLFloat},
+    longitude: { type: GraphQLFloat },
+    latitude: { type: GraphQLFloat },
     userAccountId: { type: GraphQLInt },
-
-  })
+    price: { type: GraphQLFloat },
+  }),
 });
 
 const AuthenticationInfoType = new GraphQLObjectType({
@@ -94,8 +98,8 @@ const AuthenticationInfoType = new GraphQLObjectType({
     email: { type: GraphQLString },
     createdAt: { type: GraphQLString },
     updatedAt: { type: GraphQLString },
-    userAccountId: { type: GraphQLInt }
-  })
+    userAccountId: { type: GraphQLInt },
+  }),
 });
 
 const RootQuery = new GraphQLObjectType({
@@ -108,7 +112,7 @@ const RootQuery = new GraphQLObjectType({
         users = await User.findAll({ raw: true });
         console.log("users", users);
         return users;
-      }
+      },
     },
     cars: {
       type: GraphQLList(CarType),
@@ -117,35 +121,35 @@ const RootQuery = new GraphQLObjectType({
         cars = await CarInfo.findAll({ raw: true });
         console.log("cars", cars);
         return cars;
-      }
+      },
     },
     carsByUserId: {
       type: GraphQLList(CarType),
       args: {
-        userAccountId: { type: GraphQLInt }
+        userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
         return CarInfo.findAll({
           raw: true,
           where: {
-            userAccountId: args.userAccountId
-          }
+            userAccountId: args.userAccountId,
+          },
         });
-      }
+      },
     },
     parkingSpotsByUserId: {
       type: GraphQLList(ParkingSpotType),
       args: {
-        userAccountId: { type: GraphQLInt }
+        userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
         return ParkingSpot.findAll({
           raw: true,
           where: {
-            userAccountId: args.userAccountId
-          }
+            userAccountId: args.userAccountId,
+          },
         });
-      }
+      },
     },
     parkingSpots: {
       type: GraphQLList(ParkingSpotType),
@@ -154,7 +158,7 @@ const RootQuery = new GraphQLObjectType({
         spots = await ParkingSpot.findAll({ raw: true });
         console.log("spots", spots);
         return spots;
-      }
+      },
     },
     authenticationInfos: {
       type: GraphQLList(AuthenticationInfoType),
@@ -163,22 +167,22 @@ const RootQuery = new GraphQLObjectType({
         autheticationInfos = await AuthenticationInfos.findAll({ raw: true });
         // console.log("spots", spots);
         return autheticationInfos;
-      }
+      },
     },
     getAuthenticationbyEmail: {
       type: GraphQLList(AuthenticationInfoType),
       args: {
-        email: { type: GraphQLString }
+        email: { type: GraphQLString },
       },
       resolve(parent, args) {
         return AuthenticationInfos.findAll({
           where: {
-            email: args.email
-          }
+            email: args.email,
+          },
         });
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 const mutation = new GraphQLObjectType({
@@ -192,7 +196,7 @@ const mutation = new GraphQLObjectType({
         user_role: { type: GraphQLString },
         email: { type: GraphQLString, primary: true },
         phone: { type: GraphQLString },
-        password: { type: GraphQLString }
+        password: { type: GraphQLString },
       },
       resolve(parent, args) {
         return User.create({
@@ -200,29 +204,29 @@ const mutation = new GraphQLObjectType({
           lastname: args.lastname,
           user_role: args.user_role,
           email: args.email,
-          phone: args.phone
+          phone: args.phone,
         })
-          .then(resp => {
+          .then((resp) => {
             const user = resp.dataValues;
 
             AuthenticationInfos.create({
               password: args.password,
               is_login: true,
               email: user.email,
-              userAccountId: user.id
+              userAccountId: user.id,
             })
-              .then(resp => {
+              .then((resp) => {
                 return resp;
               })
-              .catch(err => {
+              .catch((err) => {
                 console.log(err);
               });
             return resp;
           })
-          .catch(err => {
+          .catch((err) => {
             throw new Error(err.errors[0].message);
           });
-      }
+      },
     },
     addCar: {
       type: CarType,
@@ -230,16 +234,16 @@ const mutation = new GraphQLObjectType({
         license: { type: GraphQLString },
         model: { type: GraphQLString },
         color: { type: GraphQLString },
-        userAccountId: { type: GraphQLInt }
+        userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
         return CarInfo.create({
           license: args.license,
           model: args.model,
           color: args.color,
-          userAccountId: args.userAccountId
+          userAccountId: args.userAccountId,
         });
-      }
+      },
     },
     updateCar: {
       type: CarType,
@@ -247,82 +251,86 @@ const mutation = new GraphQLObjectType({
         id: { type: GraphQLInt },
         license: { type: GraphQLString },
         model: { type: GraphQLString },
-        color: { type: GraphQLString }
+        color: { type: GraphQLString },
       },
       resolve(parent, args) {
-        return CarInfo.findByPk(args.id).then(car => {
+        return CarInfo.findByPk(args.id).then((car) => {
           return car
             .update({
               license: args.license,
               model: args.model,
-              color: args.color
+              color: args.color,
             })
-            .then(car => {
+            .then((car) => {
               console.log(car.dataValues);
               return car.dataValues;
             });
         });
-      }
+      },
     },
     updateParkingSpot: {
       type: ParkingSpotType,
       args: {
         id: { type: GraphQLInt },
         address: { type: GraphQLString },
-        longitude: {type: graphql.GraphQLFloat},
-        latitude: {type: graphql.GraphQLFloat}
+        longitude: { type: graphql.GraphQLFloat },
+        latitude: { type: graphql.GraphQLFloat },
+        price: { type: graphql.GraphQLFloat },
       },
       resolve(parent, args) {
-        return ParkingSpot.findByPk(args.id).then(spot => {
+        return ParkingSpot.findByPk(args.id).then((spot) => {
           return spot
             .update({
               address: args.address,
               longitude: args.longitude,
-              latitude: args.latitude
+              latitude: args.latitude,
+              price: args.price,
             })
-            .then(spot => {
+            .then((spot) => {
               console.log(spot.dataValues);
               return spot.dataValues;
             });
         });
-      }
+      },
     },
     addParkingSpot: {
       type: ParkingSpotType,
       args: {
         address: { type: GraphQLString },
-        longitude: {type: graphql.GraphQLFloat},
-        latitude: {type: graphql.GraphQLFloat},
-        userAccountId: { type: GraphQLInt }
+        longitude: { type: graphql.GraphQLFloat },
+        latitude: { type: graphql.GraphQLFloat },
+        userAccountId: { type: GraphQLInt },
+        price: { type: GraphQLFloat },
       },
       resolve(parent, args) {
         return ParkingSpot.create({
           address: args.address,
           longitude: args.longitude,
           latitude: args.latitude,
-          userAccountId: args.userAccountId
+          userAccountId: args.userAccountId,
+          price: args.price,
         });
-      }
+      },
     },
     addAuthentications: {
       type: AuthenticationInfoType,
       args: {
         email: { type: GraphQLString },
         password: { type: GraphQLString },
-        userAccountId: { type: GraphQLInt }
+        userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
         return AuthenticationInfos.create({
           email: args.email,
           password: args.password,
-          userAccountId: args.userAccountId
+          userAccountId: args.userAccountId,
         });
-      }
-    }
-  }
+      },
+    },
+  },
 });
 module.exports = new GraphQLSchema({
   query: RootQuery,
-  mutation
+  mutation,
 });
 //# sourceMappingURL=schema.js.map
