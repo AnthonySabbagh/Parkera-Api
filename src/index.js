@@ -4,28 +4,21 @@ var graphqlHTTP = require("express-graphql");
 var { buildSchema } = require("graphql");
 dotenv.config();
 const PORT = process.env.SERVER_PORT || process.env.PORT || 8080;
-const schema = require("./schema.js");
-// var schema = buildSchema(`
-//     type Query {
-//         hello: String
-//     }
-// `);
-
-// var sequelize = new Sequelize("postgres://user:pass@example.com:5432/dbname");
-// var schema = buildSchema(`
-//     type Query {
-//         hello: String
-//     }
-// `);
+const { schema } = require("./schema.js");
+const cors = require("cors");
 
 var app = express();
-app.get("/", (req, res) => res.send("Parkera API. Hit api at /api"));
+
 app.use(
   "/api",
   graphqlHTTP({
     schema: schema,
-    graphiql: true
+    graphiql: true,
   })
 );
+
+app.get("/", (req, res) => res.send("Parkera API. Hit api at /api"));
 app.listen(PORT);
 console.log("Running GraphQL API on port " + PORT);
+
+module.exports = app;
