@@ -329,8 +329,10 @@ const mutation = new GraphQLObjectType({
     },
   },
 });
-module.exports = new GraphQLSchema({
-  query: RootQuery,
-  mutation,
-});
+module.exports = {
+  schema: new GraphQLSchema({
+    query: RootQuery,
+    mutation,
+  }),
+};
 //# sourceMappingURL=schema.js.map
