@@ -5,7 +5,6 @@ var { buildSchema } = require("graphql");
 dotenv.config();
 const PORT = process.env.SERVER_PORT || process.env.PORT || 8080;
 const { schema } = require("./schema.js");
-const cors = require("cors");
 
 var app = express();
 
