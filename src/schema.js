@@ -38,6 +38,10 @@ const AuthenticationInfos = require("./AuthenticationInfos.js")(
   sequelize,
   DataTypes
 );
+const Booking = require("./BookingModel.js")(sequelize, DataTypes);
+Booking.hasOne(User)
+Booking.hasOne(CarInfo)
+Booking.hasOne(ParkingSpot)
 ParkingSpot.belongsTo(User);
 CarInfo.belongsTo(User);
 AuthenticationInfos.belongsTo(User);
@@ -47,6 +51,7 @@ AuthenticationInfos.belongsTo(User);
   await CarInfo.sync({ alter: true });
   await ParkingSpot.sync({ alter: true });
   await AuthenticationInfos.sync({ alter: true });
+  await Booking.sync({alter: true })
 })();
 
 const UserType = new GraphQLObjectType({
@@ -101,6 +106,19 @@ const AuthenticationInfoType = new GraphQLObjectType({
     userAccountId: { type: GraphQLInt },
   }),
 });
+
+const BookingType = new GraphQLObjectType({
+  name: "Booking",
+  fields: () => ({
+    id: { type: GraphQLInt },
+    createdAt: { type: GraphQLString },
+    updatedAt: { type: GraphQLString },
+    userAccountId: { type: GraphQLInt },
+    carInfoId: { type: GraphQLInt},
+    parkSpotId: { type: GraphQLInt},
+    price: {type: GraphQLFloat},
+  })
+})
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuerytype",
@@ -180,6 +198,13 @@ const RootQuery = new GraphQLObjectType({
             email: args.email,
           },
         });
+      },
+    },
+    bookings: {
+      type: GraphQLList(BookingType),
+      async resolve(parent, args) {
+        bookings = await Booking.findAll({ raw: true });
+        return bookings;
       },
     },
   },
@@ -323,6 +348,23 @@ const mutation = new GraphQLObjectType({
         return AuthenticationInfos.create({
           email: args.email,
           password: args.password,
+          userAccountId: args.userAccountId,
+        });
+      },
+    },
+    addBooking: {
+      type: BookingType,
+      args: {
+        price: { type: GraphQLFloat },
+        parkSpotId: { type: GraphQLInt },
+        carInfoId: { type: GraphQLInt },
+        userAccountId: { type: GraphQLInt },
+      },
+      resolve(parent, args) {
+        return Booking.create({
+          price: args.price,
+          parkSpotId: args.parkSpotId,
+          carInfoId: args.parkSpotId,
           userAccountId: args.userAccountId,
         });
       },
