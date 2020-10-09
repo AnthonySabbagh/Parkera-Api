@@ -45,6 +45,7 @@ Booking.hasOne(ParkingSpot)
 ParkingSpot.belongsTo(User);
 CarInfo.belongsTo(User);
 AuthenticationInfos.belongsTo(User);
+
 //Synching database with how models are defined
 (async () => {
   await User.sync({ alter: true });
@@ -120,16 +121,16 @@ const BookingType = new GraphQLObjectType({
   })
 })
 
+var userResolver = require("./resolvers/userQuery.js");
+const { DatabaseError } = require("sequelize/lib/errors");
+
 const RootQuery = new GraphQLObjectType({
   name: "RootQuerytype",
   fields: {
     users: {
       type: GraphQLList(UserType),
       async resolve(parent, args) {
-        console.log("user query");
-        users = await User.findAll({ raw: true });
-        console.log("users", users);
-        return users;
+        return userResolver(parent, args, User)
       },
     },
     cars: {
