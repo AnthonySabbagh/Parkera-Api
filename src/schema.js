@@ -117,7 +117,7 @@ const BookingType = new GraphQLObjectType({
     userAccountId: { type: GraphQLInt },
     carInfoId: { type: GraphQLInt},
     parkSpotId: { type: GraphQLInt},
-    price: {type: GraphQLFloat},
+    totalCost: {type: GraphQLFloat},
   })
 })
 
