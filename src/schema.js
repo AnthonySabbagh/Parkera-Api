@@ -47,12 +47,12 @@ const AuthenticationInfos = require("./AuthenticationInfos.js")(
   DataTypes
 );
 const Booking = require("./BookingModel.js")(sequelize, DataTypes);
-Booking.hasOne(User)
-Booking.hasOne(CarInfo)
-Booking.hasOne(ParkingSpot)
 ParkingSpot.belongsTo(User);
 CarInfo.belongsTo(User);
 AuthenticationInfos.belongsTo(User);
+Booking.belongsTo(User);
+Booking.belongsTo(CarInfo);
+Booking.belongsTo(ParkingSpot);
 
 //Synching database with how models are defined
 (async () => {
