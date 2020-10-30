@@ -19,7 +19,8 @@ const db = determineDbEnv();
 const sequelize = new Sequelize({...db,
   logging: console.log,
   ssl: true,
-  dialectOptions: { ssl: { require: true } }});
+  dialectOptions: { ssl: { require: true } }
+});
 
 try {
   sequelize.authenticate();
@@ -41,7 +42,7 @@ const {
 //Define sequelize models
 const User = require("../models/UserModel.js")(sequelize, DataTypes);
 const CarInfo = require("./CarModel.js")(sequelize, DataTypes);
-const ParkingSpot = require("./ParkingSpotModel.js")(sequelize, DataTypes);
+const ParkingSpot = require("../models/ParkingSpotModel.js")(sequelize, DataTypes);
 const AuthenticationInfos = require("./AuthenticationInfos.js")(
   sequelize,
   DataTypes

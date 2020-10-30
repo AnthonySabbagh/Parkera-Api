@@ -15,6 +15,6 @@
         }
     },
     "include": [
-        "src/**/*", "models/UserModel.js"
+        "src/**/*", "models/UserModel.js", "models/ParkingSpotModel.js"
     ]
 }

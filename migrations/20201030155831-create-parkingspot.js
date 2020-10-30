@@ -1,27 +1,31 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('user_account', {
+    await queryInterface.createTable('park_spots', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      firstname: {
+      address: {
         type: Sequelize.STRING
       },
-      lastname: {
-        type: Sequelize.STRING
+      longitude: {
+        type: Sequelize.DECIMAL
       },
-      email: {
-        type: Sequelize.STRING
+      latitude: {
+        type: Sequelize.DECIMAL
       },
-      phone: {
-        type: Sequelize.STRING
+      price: {
+        type: Sequelize.DECIMAL
       },
-      user_role: {
-        type: Sequelize.STRING
+      userAccountId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "user_account", // name of Target model
+          key: "id", // key in Target model that we're referencing
+        },
       },
       createdAt: {
         allowNull: false,
@@ -34,6 +38,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('user_account');
+    await queryInterface.dropTable('park_spots');
   }
 };
