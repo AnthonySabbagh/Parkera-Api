@@ -5,7 +5,7 @@ const DataTypes = require("sequelize/lib/data-types");
 const dbconfig = require("./db");
 
 const determineDbEnv = () => {
-  const env = process.env.ENV || 'development';
+  const env = process.env.NODE_ENV || 'development';
   if (env === "test") {
     return dbconfig.test;
   } else if (env === "production") {
@@ -39,7 +39,7 @@ const {
 } = require("graphql");
 
 //Define sequelize models
-const User = require("./UserModel.js")(sequelize, DataTypes);
+const User = require("../models/UserModel.js")(sequelize, DataTypes);
 const CarInfo = require("./CarModel.js")(sequelize, DataTypes);
 const ParkingSpot = require("./ParkingSpotModel.js")(sequelize, DataTypes);
 const AuthenticationInfos = require("./AuthenticationInfos.js")(
@@ -50,9 +50,9 @@ const Booking = require("./BookingModel.js")(sequelize, DataTypes);
 ParkingSpot.belongsTo(User);
 CarInfo.belongsTo(User);
 AuthenticationInfos.belongsTo(User);
-Booking.belongsTo(User);
-Booking.belongsTo(CarInfo);
-Booking.belongsTo(ParkingSpot);
+// Booking.belongsTo(User);
+// Booking.belongsTo(CarInfo);
+// Booking.belongsTo(ParkingSpot);
 
 //Synching database with how models are defined
 (async () => {

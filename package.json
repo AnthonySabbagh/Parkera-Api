@@ -19,11 +19,13 @@
     "express-graphql": "^0.9.0",
     "graphql": "^14.6.0",
     "jest": "^26.4.2",
-    "pg": "^7.17.1",
+    "pg": "^7.18.2",
     "pg-hstore": "^2.3.3",
     "pg-promise": "^10.3.5",
     "reflect-metadata": "^0.1.13",
-    "sequelize": "^5.21.3"
+    "sequelize": "^5.22.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "sequelize-cli": "^6.2.0"
+  }
 }
