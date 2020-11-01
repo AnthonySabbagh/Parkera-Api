@@ -121,7 +121,15 @@ const BookingType = new GraphQLObjectType({
   })
 })
 
-var userResolver = require("./resolvers/userQuery.js");
+var usersResolver = require("./resolvers/users.js");
+var carsByUserIdResolver = require("./resolvers/carsByUserId.js");
+var parkingSpotsByUserIdResolver = require("./resolvers/parkingSpotsByUserId.js");
+var carsResolver = require("./resolvers/cars.js");
+var parkingSpotsResolver = require("./resolvers/parkingSpots.js");
+var authenticationInfosResolver = require("./resolvers/auth.js");
+var authenticationInfosByEmailResolver = require("./resolvers/authByEmail.js");
+var bookingsResolver = require("./resolvers/bookings.js");
+
 const { DatabaseError } = require("sequelize/lib/errors");
 
 const RootQuery = new GraphQLObjectType({
@@ -129,17 +137,14 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     users: {
       type: GraphQLList(UserType),
-      async resolve(parent, args) {
-        return userResolver(parent, args, User)
+      resolve(parent, args) {
+        return usersResolver(parent, args, User)
       },
     },
     cars: {
       type: GraphQLList(CarType),
-      async resolve(parent, args) {
-        console.log("cars query");
-        cars = await CarInfo.findAll({ raw: true });
-        console.log("cars", cars);
-        return cars;
+      resolve(parent, args) {
+        return carsResolver;
       },
     },
     carsByUserId: {
@@ -148,13 +153,8 @@ const RootQuery = new GraphQLObjectType({
         userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
-        return CarInfo.findAll({
-          raw: true,
-          where: {
-            userAccountId: args.userAccountId,
-          },
-        });
-      },
+        return carsByUserIdResolver(parent, args, CarInfo);
+        }
     },
     parkingSpotsByUserId: {
       type: GraphQLList(ParkingSpotType),
@@ -162,30 +162,19 @@ const RootQuery = new GraphQLObjectType({
         userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
-        return ParkingSpot.findAll({
-          raw: true,
-          where: {
-            userAccountId: args.userAccountId,
-          },
-        });
+        return parkingSpotsByUserIdResolver(parent, args, ParkingSpot);
       },
     },
     parkingSpots: {
       type: GraphQLList(ParkingSpotType),
-      async resolve(parent, args) {
-        console.log("parking spot query");
-        spots = await ParkingSpot.findAll({ raw: true });
-        console.log("spots", spots);
-        return spots;
+      resolve(parent, args) {
+        return parkingSpotsResolver(parent, args, ParkingSpot);
       },
     },
     authenticationInfos: {
       type: GraphQLList(AuthenticationInfoType),
-      async resolve(parent, args) {
-        // consossssle.log("parking spot query");
-        autheticationInfos = await AuthenticationInfos.findAll({ raw: true });
-        // console.log("spots", spots);
-        return autheticationInfos;
+      resolve(parent, args) {
+        return authenticationInfosResolver(parent, args, AuthenticationInfos);
       },
     },
     getAuthenticationbyEmail: {
@@ -194,23 +183,25 @@ const RootQuery = new GraphQLObjectType({
         email: { type: GraphQLString },
       },
       resolve(parent, args) {
-        return AuthenticationInfos.findAll({
-          where: {
-            email: args.email,
-          },
-        });
+        return authenticationInfosByEmailResolver(parent, args, AuthenticationInfos);
       },
     },
     bookings: {
       type: GraphQLList(BookingType),
-      async resolve(parent, args) {
-        bookings = await Booking.findAll({ raw: true });
-        return bookings;
+      resolve(parent, args) {
+        return bookingsResolver(parent, args, Booking);
       },
     },
   },
 });
 
+var addUserResolver = require("./resolvers/addUser.js");
+var addCarResolver = require("./resolvers/addCar.js");
+var updateCarResolver = require("./resolvers/updateCar.js");
+var updateParkingSpotResolver = require("./resolvers/updateParkingSpot.js");
+var addParkingSpotResolver = require("./resolvers/addParkingSpot.js");
+var addAuthenticationsResolver = require("./resolvers/addAuthentications.js");
+var addBookingResolver = require("./resolvers/addBooking.js");
 const mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
@@ -225,33 +216,7 @@ const mutation = new GraphQLObjectType({
         password: { type: GraphQLString },
       },
       resolve(parent, args) {
-        return User.create({
-          firstname: args.firstname,
-          lastname: args.lastname,
-          user_role: args.user_role,
-          email: args.email,
-          phone: args.phone,
-        })
-          .then((resp) => {
-            const user = resp.dataValues;
-
-            AuthenticationInfos.create({
-              password: args.password,
-              is_login: true,
-              email: user.email,
-              userAccountId: user.id,
-            })
-              .then((resp) => {
-                return resp;
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-            return resp;
-          })
-          .catch((err) => {
-            throw new Error(err.errors[0].message);
-          });
+        return addUserResolver(parent, args, User, AuthenticationInfos);
       },
     },
     addCar: {
@@ -263,12 +228,7 @@ const mutation = new GraphQLObjectType({
         userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
-        return CarInfo.create({
-          license: args.license,
-          model: args.model,
-          color: args.color,
-          userAccountId: args.userAccountId,
-        });
+        return addCarResolver(parent, args, CarInfo);
       },
     },
     updateCar: {
@@ -280,18 +240,7 @@ const mutation = new GraphQLObjectType({
         color: { type: GraphQLString },
       },
       resolve(parent, args) {
-        return CarInfo.findByPk(args.id).then((car) => {
-          return car
-            .update({
-              license: args.license,
-              model: args.model,
-              color: args.color,
-            })
-            .then((car) => {
-              console.log(car.dataValues);
-              return car.dataValues;
-            });
-        });
+        return updateCarResolver(parent, args, CarInfo);
       },
     },
     updateParkingSpot: {
@@ -304,19 +253,7 @@ const mutation = new GraphQLObjectType({
         price: { type: graphql.GraphQLFloat },
       },
       resolve(parent, args) {
-        return ParkingSpot.findByPk(args.id).then((spot) => {
-          return spot
-            .update({
-              address: args.address,
-              longitude: args.longitude,
-              latitude: args.latitude,
-              price: args.price,
-            })
-            .then((spot) => {
-              console.log(spot.dataValues);
-              return spot.dataValues;
-            });
-        });
+        return updateParkingSpotResolver(parent, args, ParkingSpot);
       },
     },
     addParkingSpot: {
@@ -329,13 +266,7 @@ const mutation = new GraphQLObjectType({
         price: { type: GraphQLFloat },
       },
       resolve(parent, args) {
-        return ParkingSpot.create({
-          address: args.address,
-          longitude: args.longitude,
-          latitude: args.latitude,
-          userAccountId: args.userAccountId,
-          price: args.price,
-        });
+       return addParkingSpotResolver(parent, args, ParkingSpot);
       },
     },
     addAuthentications: {
@@ -346,11 +277,7 @@ const mutation = new GraphQLObjectType({
         userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
-        return AuthenticationInfos.create({
-          email: args.email,
-          password: args.password,
-          userAccountId: args.userAccountId,
-        });
+        return addAuthenticationsResolver(parent, args, AuthenticationInfos);
       },
     },
     addBooking: {
@@ -362,12 +289,7 @@ const mutation = new GraphQLObjectType({
         userAccountId: { type: GraphQLInt },
       },
       resolve(parent, args) {
-        return Booking.create({
-          price: args.price,
-          parkSpotId: args.parkSpotId,
-          carInfoId: args.parkSpotId,
-          userAccountId: args.userAccountId,
-        });
+       return addBookingResolver(parent, args, Booking);
       },
     },
   },
