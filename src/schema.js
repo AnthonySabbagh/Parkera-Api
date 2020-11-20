@@ -55,6 +55,10 @@ AuthenticationInfos.belongsTo(User);
   await Booking.sync({alter: true })
 })();
 
+//Get google maps api client
+const {Client} = require("@googlemaps/google-maps-services-js");
+const mapsClient = new Client({});
+
 const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
@@ -227,15 +231,15 @@ const RootQuery = new GraphQLObjectType({
             spotDistances[i]=[spots[i].id, r.data.rows[i].elements[0].distance.value]
           }
           console.log(spotDistances);
-          //finding 5 closest spots within 1km
+          //finding closest spots within 2km
           spotDistances=spotDistances.filter(function(s) {
-            return s[1] <= 1000
+            return s[1] <= 2000
           });
           spotDistances.sort(function(s1,s2) {
             return s1[1]-s2[1]
           });
           console.log(spotDistances);
-          splotDistances.splice(0, 5);
+          //plotDistances.splice(0, 5); can be used to return a max of 5 spots
           closeIDs = spotDistances.map(function(s){
             return s[0];
           });
