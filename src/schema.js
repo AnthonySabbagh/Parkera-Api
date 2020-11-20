@@ -192,7 +192,66 @@ const RootQuery = new GraphQLObjectType({
         return bookingsResolver(parent, args, Booking);
       },
     },
-  },
+    searchNear: {
+      type: GraphQLList(ParkingSpotType),
+      args: {
+        latitude: {type: graphql.GraphQLFloat},
+        longitude: {type: graphql.GraphQLFloat}
+      },
+      async resolve(parent, args){
+        spots = await ParkingSpot.findAll({ raw: true });
+        console.log("spots", spots);
+        spotArray = spots.keys();
+        console.log(spots[0]);
+        console.log(spots.length)
+        var spotCoordinates = [];
+        for (i = 0; i < spots.length; i++){
+          spotCoordinates[i]=[spots[i].latitude, spots[i].longitude];
+        }
+        var closeIDs;
+        console.log(spotCoordinates);
+        await mapsClient.distancematrix({
+          params: {
+            origins: spotCoordinates,
+            destinations: [[args.latitude, args.longitude]],
+            key: "AIzaSyC5VziP787dJWjz-FGiH6pica_oWyF0Yk8"
+          },
+          timeout: 1000 // milliseconds
+        }
+        //, axiosInstance)
+        )
+        .then(r => {
+          var spotDistances = []; //format [[id,distance(in meters)]]
+          for (i = 0; i < r.data.rows.length; i++){
+            console.log(r.data.rows[i].elements[0].distance.value)
+            spotDistances[i]=[spots[i].id, r.data.rows[i].elements[0].distance.value]
+          }
+          console.log(spotDistances);
+          //finding 5 closest spots within 1km
+          spotDistances=spotDistances.filter(function(s) {
+            return s[1] <= 1000
+          });
+          spotDistances.sort(function(s1,s2) {
+            return s1[1]-s2[1]
+          });
+          console.log(spotDistances);
+          splotDistances.splice(0, 5);
+          closeIDs = spotDistances.map(function(s){
+            return s[0];
+          });
+          console.log(closeIDs);
+          })
+        .catch(e => {
+          console.log(e);
+        });
+        console.log(closeIDs);
+        console.log(spots);
+        r=spots.filter( element => closeIDs.includes(element.id))
+        console.log(r);
+        return r;
+      }
+    }
+  }
 });
 
 var addUserResolver = require("./resolvers/addUser.js");
