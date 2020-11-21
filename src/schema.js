@@ -55,6 +55,10 @@ AuthenticationInfos.belongsTo(User);
   await Booking.sync({alter: true })
 })();
 
+//Get google maps api client
+const {Client} = require("@googlemaps/google-maps-services-js");
+const mapsClient = new Client({});
+
 const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
@@ -192,7 +196,66 @@ const RootQuery = new GraphQLObjectType({
         return bookingsResolver(parent, args, Booking);
       },
     },
-  },
+    searchNear: {
+      type: GraphQLList(ParkingSpotType),
+      args: {
+        latitude: {type: graphql.GraphQLFloat},
+        longitude: {type: graphql.GraphQLFloat}
+      },
+      async resolve(parent, args){
+        spots = await ParkingSpot.findAll({ raw: true });
+        console.log("spots", spots);
+        spotArray = spots.keys();
+        console.log(spots[0]);
+        console.log(spots.length)
+        var spotCoordinates = [];
+        for (i = 0; i < spots.length; i++){
+          spotCoordinates[i]=[spots[i].latitude, spots[i].longitude];
+        }
+        var closeIDs;
+        console.log(spotCoordinates);
+        await mapsClient.distancematrix({
+          params: {
+            origins: spotCoordinates,
+            destinations: [[args.latitude, args.longitude]],
+            key: "AIzaSyC5VziP787dJWjz-FGiH6pica_oWyF0Yk8"
+          },
+          timeout: 1000 // milliseconds
+        }
+        //, axiosInstance)
+        )
+        .then(r => {
+          var spotDistances = []; //format [[id,distance(in meters)]]
+          for (i = 0; i < r.data.rows.length; i++){
+            console.log(r.data.rows[i].elements[0].distance.value)
+            spotDistances[i]=[spots[i].id, r.data.rows[i].elements[0].distance.value]
+          }
+          console.log(spotDistances);
+          //finding closest spots within 2km
+          spotDistances=spotDistances.filter(function(s) {
+            return s[1] <= 2000
+          });
+          spotDistances.sort(function(s1,s2) {
+            return s1[1]-s2[1]
+          });
+          console.log(spotDistances);
+          //plotDistances.splice(0, 5); can be used to return a max of 5 spots
+          closeIDs = spotDistances.map(function(s){
+            return s[0];
+          });
+          console.log(closeIDs);
+          })
+        .catch(e => {
+          console.log(e);
+        });
+        console.log(closeIDs);
+        console.log(spots);
+        r=spots.filter( element => closeIDs.includes(element.id))
+        console.log(r);
+        return r;
+      }
+    }
+  }
 });
 
 var addUserResolver = require("./resolvers/addUser.js");
