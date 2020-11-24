@@ -38,15 +38,30 @@ const AuthenticationInfos = require("./AuthenticationInfos.js")(
   sequelize,
   DataTypes
 );
-const Booking = require("./BookingModel.js")(sequelize, DataTypes);
-Booking.hasOne(User)
-Booking.hasOne(CarInfo)
-Booking.hasOne(ParkingSpot)
-ParkingSpot.belongsTo(User);
-CarInfo.belongsTo(User);
-AuthenticationInfos.belongsTo(User);
 
-//Synching database with how models are defined
+//Defining relations and syncing models with database
+const Booking = require("./BookingModel.js")(sequelize, DataTypes);
+(async () => {
+  await User.sync({ alter: true });
+})();
+AuthenticationInfos.belongsTo(User);
+(async () => {
+  await AuthenticationInfos.sync({ alter: true });
+})();
+User.hasMany(ParkingSpot);
+(async () => {
+  await ParkingSpot.sync({ alter: true });
+})();
+User.hasMany(CarInfo);
+(async () => {
+  await CarInfo.sync({ alter: true });
+})();
+User.hasMany(Booking);
+ParkingSpot.hasMany(Booking);
+CarInfo.hasMany(Booking);
+(async () => {
+  await Booking.sync({force: true })
+})();
 (async () => {
   await User.sync({ alter: true });
   await CarInfo.sync({ alter: true });
