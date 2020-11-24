@@ -148,7 +148,7 @@ const RootQuery = new GraphQLObjectType({
     cars: {
       type: GraphQLList(CarType),
       resolve(parent, args) {
-        return carsResolver;
+        return carsResolver(parent, args, CarInfo);
       },
     },
     carsByUserId: {
