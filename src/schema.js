@@ -121,7 +121,7 @@ const BookingType = new GraphQLObjectType({
     userAccountId: { type: GraphQLInt },
     carInfoId: { type: GraphQLInt},
     parkSpotId: { type: GraphQLInt},
-    totalCost: {type: GraphQLFloat},
+    duration: {type: GraphQLInt},
   })
 })
 
@@ -346,7 +346,7 @@ const mutation = new GraphQLObjectType({
     addBooking: {
       type: BookingType,
       args: {
-        price: { type: GraphQLFloat },
+        duration: { type: GraphQLInt },
         parkSpotId: { type: GraphQLInt },
         carInfoId: { type: GraphQLInt },
         userAccountId: { type: GraphQLInt },
