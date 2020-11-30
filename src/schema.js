@@ -280,6 +280,7 @@ var updateParkingSpotResolver = require("./resolvers/updateParkingSpot.js");
 var addParkingSpotResolver = require("./resolvers/addParkingSpot.js");
 var addAuthenticationsResolver = require("./resolvers/addAuthentications.js");
 var addBookingResolver = require("./resolvers/addBooking.js");
+var deleteBookingResolver = require("./resolvers/deleteBooking.js")
 const mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
@@ -370,6 +371,15 @@ const mutation = new GraphQLObjectType({
        return addBookingResolver(parent, args, Booking);
       },
     },
+    deleteBooking: {
+      type: BookingType,
+      args:{
+        id: {type: GraphQLInt},
+      },
+      resolve(parent, args){
+        return deleteBookingResolver(parent, args, Booking);
+      }
+    }
   },
 });
 module.exports = {
