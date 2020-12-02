@@ -145,6 +145,7 @@ var carsByUserIdResolver = require("./resolvers/carsByUserId.js");
 var parkingSpotsByUserIdResolver = require("./resolvers/parkingSpotsByUserId.js");
 var carsResolver = require("./resolvers/cars.js");
 var parkingSpotsResolver = require("./resolvers/parkingSpots.js");
+var parkingSpotResolver = require("./resolvers/parkingSpot.js");
 var authenticationInfosResolver = require("./resolvers/auth.js");
 var authenticationInfosByEmailResolver = require("./resolvers/authByEmail.js");
 var bookingsResolver = require("./resolvers/bookings.js");
@@ -188,6 +189,15 @@ const RootQuery = new GraphQLObjectType({
       type: GraphQLList(ParkingSpotType),
       resolve(parent, args) {
         return parkingSpotsResolver(parent, args, ParkingSpot);
+      },
+    },
+    parkingSpot: {
+      type: GraphQLList(ParkingSpotType),
+      args: {
+        id: { type: GraphQLInt },
+      },
+      resolve(parent, args) {
+        return parkingSpotResolver(parent, args, ParkingSpot);
       },
     },
     authenticationInfos: {
