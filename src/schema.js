@@ -149,7 +149,7 @@ var parkingSpotResolver = require("./resolvers/parkingSpot.js");
 var authenticationInfosResolver = require("./resolvers/auth.js");
 var authenticationInfosByEmailResolver = require("./resolvers/authByEmail.js");
 var bookingsResolver = require("./resolvers/bookings.js");
-var bookingsbySpotIdResolver = require("./resolvers/bookingsBySpotId.js");
+var bookingsBySpotIdResolver = require("./resolvers/bookingsBySpotId.js");
 
 const { DatabaseError } = require("sequelize/lib/errors");
 
