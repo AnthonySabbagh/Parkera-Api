@@ -149,6 +149,7 @@ var parkingSpotResolver = require("./resolvers/parkingSpot.js");
 var authenticationInfosResolver = require("./resolvers/auth.js");
 var authenticationInfosByEmailResolver = require("./resolvers/authByEmail.js");
 var bookingsResolver = require("./resolvers/bookings.js");
+var bookingsbySpotIdResolver = require("./resolvers/bookingsBySpotId.js");
 
 const { DatabaseError } = require("sequelize/lib/errors");
 
@@ -219,6 +220,15 @@ const RootQuery = new GraphQLObjectType({
       type: GraphQLList(BookingType),
       resolve(parent, args) {
         return bookingsResolver(parent, args, Booking);
+      },
+    },
+    bookingsbySpotId: {
+      type:GraphQLList(BookingType),
+      args: {
+        parkingSpotId: { type: GraphQLInt},
+      },
+      resolve(parent, args) {
+        return bookingsBySpotIdResolver(parent, args, Booking,);
       },
     },
     searchNear: {
